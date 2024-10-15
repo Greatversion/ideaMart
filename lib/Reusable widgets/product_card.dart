@@ -5,8 +5,13 @@ import 'package:idealmart/utils/snackBar.dart';
 
 class ProductCard extends StatefulWidget {
   final Product product;
+  final Function(Product) onAddToCart;
 
-  const ProductCard({Key? key, required this.product}) : super(key: key);
+  const ProductCard({
+    Key? key,
+    required this.product,
+    required this.onAddToCart, // Callback to update cart in parent widget
+  }) : super(key: key);
 
   @override
   State<ProductCard> createState() => _ProductCardState();
@@ -14,14 +19,13 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   bool isAdded = false;
-  int quantity = 1; // Default quantity is 1
+  int quantity = 1;
 
   void _showProductDetailsDialog(BuildContext context) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        int dialogQuantity =
-            quantity; // Create local copy of quantity for the dialog
+        int dialogQuantity = quantity;
         return AlertDialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(15),
@@ -129,10 +133,10 @@ class _ProductCardState extends State<ProductCard> {
                       child: ElevatedButton(
                         onPressed: () {
                           setState(() {
-                            quantity =
-                                dialogQuantity; // Update main widget's quantity
+                            quantity = dialogQuantity; // Update main widget's quantity
                             isAdded = true;
                           });
+                          widget.onAddToCart(widget.product); // Add product to cart
                           Navigator.pop(context); // Close the dialog
                           SnackBarHelper.showSnackBar(context,
                               "Added to Cart: ${widget.product.name} X $dialogQuantity");
@@ -161,7 +165,6 @@ class _ProductCardState extends State<ProductCard> {
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
-        // Navigate to product details page
         _showProductDetailsDialog(context);
       },
       child: Card(
@@ -175,8 +178,7 @@ class _ProductCardState extends State<ProductCard> {
           children: [
             Expanded(
               child: ClipRRect(
-                borderRadius:
-                    const BorderRadius.vertical(top: Radius.circular(15)),
+                borderRadius: const BorderRadius.vertical(top: Radius.circular(15)),
                 child: Image.asset(
                   widget.product.imagePath,
                   fit: BoxFit.cover,
@@ -235,6 +237,7 @@ class _ProductCardState extends State<ProductCard> {
                             setState(() {
                               isAdded = !isAdded;
                             });
+                            widget.onAddToCart(widget.product); // Add product to cart
                             SnackBarHelper.showSnackBar(context,
                                 "Added to Cart: ${widget.product.name}");
                           },

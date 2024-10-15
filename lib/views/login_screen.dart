@@ -155,6 +155,7 @@ class _LoginPageState extends State<LoginPage> {
 
                             // Email TextField
                             TextFormField(
+                              keyboardType: TextInputType.emailAddress,
                               controller: _emailController,
                               decoration: InputDecoration(
                                 labelText: 'Email Address',
@@ -183,6 +184,7 @@ class _LoginPageState extends State<LoginPage> {
 
                             // Password TextField
                             TextFormField(
+                              keyboardType: TextInputType.number,
                               controller: _passwordController,
                               obscureText: _obscurePassword,
                               decoration: InputDecoration(
