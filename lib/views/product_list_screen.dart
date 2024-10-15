@@ -32,6 +32,7 @@ class _ProductGridPageState extends State<ProductGridPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color.fromARGB(249, 247, 247, 247),
       appBar: AppBar(
           automaticallyImplyLeading: false,
           toolbarHeight: 100,
@@ -65,20 +66,23 @@ class _ProductGridPageState extends State<ProductGridPage> {
           backgroundColor: const Color.fromARGB(255, 14, 128, 88)),
       body: Padding(
         padding: const EdgeInsets.all(10.0),
-        child: GridView.builder(
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: MediaQuery.of(context).size.width > 600
-                ? 3
-                : 2, // Responsive columns
-            crossAxisSpacing: 10,
-            mainAxisSpacing: 10,
-            childAspectRatio:
-                0.75, // Adjust aspect ratio to fit product image and text
+        child: Scrollbar(
+          thickness: 2,
+          child: GridView.builder(
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: MediaQuery.of(context).size.width > 600
+                  ? 3
+                  : 2, // Responsive columns
+              crossAxisSpacing: 10,
+              mainAxisSpacing: 10,
+              childAspectRatio:
+                  0.75, // Adjust aspect ratio to fit product image and text
+            ),
+            itemCount: filteredProducts.length,
+            itemBuilder: (context, index) {
+              return ProductCard(product: filteredProducts[index]);
+            },
           ),
-          itemCount: filteredProducts.length,
-          itemBuilder: (context, index) {
-            return ProductCard(product: filteredProducts[index]);
-          },
         ),
       ),
     );

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:idealmart/utils/colors.dart';
-import 'package:idealmart/views/login_screen.dart';
+
 import 'package:idealmart/views/splash_screen.dart';
 
 void main() {

@@ -14,13 +14,158 @@ class ProductCard extends StatefulWidget {
 
 class _ProductCardState extends State<ProductCard> {
   bool isAdded = false;
+  int quantity = 1; // Default quantity is 1
+
+  void _showProductDetailsDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        int dialogQuantity =
+            quantity; // Create local copy of quantity for the dialog
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(15),
+          ),
+          title: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              const Text('Product Details'),
+              IconButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                icon: const Icon(Icons.close),
+                color: Colors.black,
+              ),
+            ],
+          ),
+          content: StatefulBuilder(
+            builder: (BuildContext context, StateSetter setDialogState) {
+              return SingleChildScrollView(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Product Image
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(15),
+                      child: Image.asset(
+                        widget.product.imagePath,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Product Name
+                    Text(
+                      widget.product.name,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+
+                    // Price Details
+                    Row(
+                      children: [
+                        Text(
+                          "₹${dialogQuantity * widget.product.price}",
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.green,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        Text(
+                          "₹${widget.product.discountPrice * dialogQuantity}",
+                          style: const TextStyle(
+                            decoration: TextDecoration.lineThrough,
+                            fontSize: 14,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+
+                    // Quantity Selector
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'Quantity:',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setDialogState(() {
+                              if (dialogQuantity > 1) dialogQuantity--;
+                            });
+                          },
+                          icon: const Icon(Icons.remove),
+                        ),
+                        Text(
+                          '$dialogQuantity',
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                        IconButton(
+                          onPressed: () {
+                            setDialogState(() {
+                              dialogQuantity++;
+                            });
+                          },
+                          icon: const Icon(Icons.add),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 15),
+
+                    // Add to Cart Button
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          setState(() {
+                            quantity =
+                                dialogQuantity; // Update main widget's quantity
+                            isAdded = true;
+                          });
+                          Navigator.pop(context); // Close the dialog
+                          SnackBarHelper.showSnackBar(context,
+                              "Added to Cart: ${widget.product.name} X $dialogQuantity");
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primaryColor,
+                          padding: const EdgeInsets.symmetric(vertical: 12),
+                        ),
+                        child: const Text(
+                          'Add to Cart',
+                          style: TextStyle(fontSize: 16, color: Colors.white),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            },
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTap: () {
         // Navigate to product details page
+        _showProductDetailsDialog(context);
       },
       child: Card(
+        color: const Color.fromARGB(255, 246, 246, 246),
         elevation: 0.5,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -52,7 +197,7 @@ class _ProductCardState extends State<ProductCard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  // const SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   const Text(
                     "Aditya Retailer limited",
                     style: TextStyle(
@@ -88,13 +233,15 @@ class _ProductCardState extends State<ProductCard> {
                       IconButton(
                           onPressed: () {
                             setState(() {
-                              isAdded = true;
+                              isAdded = !isAdded;
                             });
-                            SnackBarHelper.showSnackBar(
-                                context, "Added to Cart: ${widget.product}");
+                            SnackBarHelper.showSnackBar(context,
+                                "Added to Cart: ${widget.product.name}");
                           },
                           icon: Icon(
-                            Icons.shopping_cart_outlined,
+                            isAdded
+                                ? Icons.shopping_cart_rounded
+                                : Icons.shopping_cart_outlined,
                             color:
                                 isAdded ? AppColors.primaryColor : Colors.grey,
                             size: 28,
