@@ -14,7 +14,7 @@ iDealMart is a beautifully designed Flutter application that enables users to br
   
 - **Product Listing**: 
   - Grid-based layout to display grocery products.
-  - Product filtering and sorting options (if implemented).
+  - Product filtering through search bar.
   
 - **User Authentication**:
   - Login functionality using a form-based interface.
